@@ -13,8 +13,12 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log("MongoDB connecté"))
   .catch((err) => console.log("Erreur de connexion MongoDB :", err));
 
+// app.use("/api/auth", require("./routes/auth.route"));
+// app.use("/api/quiz", require("./routes/quiz.route"));
 app.use("/api/auth", require("./routes/auth.route"));
 app.use("/api/quiz", require("./routes/quiz.route"));
+app.use("/api/score", require("./routes/score.route"));
+
 
 const PORT = process.env.PORT || 4900;
 app.listen(PORT, () => console.log(`✅ Serveur lancé sur le port ${PORT}`));
