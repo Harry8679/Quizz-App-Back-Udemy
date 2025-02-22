@@ -3,13 +3,17 @@ const Question = require("../models/question.model");
 
 const router = express.Router();
 
-// 📌 Récupérer une liste de questions aléatoires
-router.get("/", async (req, res) => {
+// 📌 Récupérer 10 questions aléatoires selon une catégorie
+router.get("/:category", async (req, res) => {
   try {
-    const questions = await Question.aggregate([{ $sample: { size: 5 } }]); // 5 questions aléatoires
+    const { category } = req.params;
+    const questions = await Question.aggregate([
+      { $match: { category } }, // Filtrer par catégorie choisie
+      { $sample: { size: 10 } } // Sélectionner 10 questions aléatoires
+    ]);
     res.json(questions);
   } catch (err) {
-    res.status(500).json({ error: "Erreur serveur lors de la récupération des questions." });
+    res.status(500).json({ error: "Erreur lors de la récupération des questions." });
   }
 });
 
