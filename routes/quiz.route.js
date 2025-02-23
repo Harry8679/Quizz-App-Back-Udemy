@@ -43,14 +43,14 @@ router.get("/:category/:difficulty", async (req, res) => {
   try {
     const { category, difficulty } = req.params;
 
-    // 🛑 Vérifier que la catégorie et la difficulté sont fournies
     if (!category || !difficulty) {
       return res.status(400).json({ error: "Veuillez spécifier une catégorie et une difficulté." });
     }
 
+    // 📌 Vérifier qu'il y a des questions dans la DB
     const questions = await Question.aggregate([
       { $match: { category, difficulty } },
-      { $sample: { size: 10 } } // Prendre 10 questions aléatoires
+      { $sample: { size: 10 } }
     ]);
 
     if (questions.length === 0) {
@@ -60,9 +60,33 @@ router.get("/:category/:difficulty", async (req, res) => {
     res.json(questions);
   } catch (err) {
     console.error("Erreur lors de la récupération des questions :", err);
-    res.status(500).json({ error: "Erreur serveur lors de la récupération des questions." });
+    res.status(500).json({ error: "Erreur serveur." });
   }
 });
+// router.get("/:category/:difficulty", async (req, res) => {
+//   try {
+//     const { category, difficulty } = req.params;
+
+//     // 🛑 Vérifier que la catégorie et la difficulté sont fournies
+//     if (!category || !difficulty) {
+//       return res.status(400).json({ error: "Veuillez spécifier une catégorie et une difficulté." });
+//     }
+
+//     const questions = await Question.aggregate([
+//       { $match: { category, difficulty } },
+//       { $sample: { size: 10 } } // Prendre 10 questions aléatoires
+//     ]);
+
+//     if (questions.length === 0) {
+//       return res.status(404).json({ error: "Aucune question trouvée pour cette catégorie et difficulté." });
+//     }
+
+//     res.json(questions);
+//   } catch (err) {
+//     console.error("Erreur lors de la récupération des questions :", err);
+//     res.status(500).json({ error: "Erreur serveur lors de la récupération des questions." });
+//   }
+// });
 
 
 /**
