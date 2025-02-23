@@ -43,6 +43,11 @@ router.get("/:category/:difficulty", async (req, res) => {
   try {
     const { category, difficulty } = req.params;
 
+    // 🛑 Vérifier que la catégorie et la difficulté sont fournies
+    if (!category || !difficulty) {
+      return res.status(400).json({ error: "Veuillez spécifier une catégorie et une difficulté." });
+    }
+
     const questions = await Question.aggregate([
       { $match: { category, difficulty } },
       { $sample: { size: 10 } } // Prendre 10 questions aléatoires
@@ -58,6 +63,7 @@ router.get("/:category/:difficulty", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur lors de la récupération des questions." });
   }
 });
+
 
 /**
  * 📌 3️⃣ Supprimer une question par son ID
