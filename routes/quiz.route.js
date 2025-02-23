@@ -12,15 +12,18 @@ router.post("/create", verifyToken, async (req, res) => {
   try {
     const { question, options, category, difficulty } = req.body;
 
-    if (!question || !options || options.length < 2) {
-      return res.status(400).json({ error: "Une question doit avoir au moins 2 options." });
+    // 🛑 Vérifier si tous les champs nécessaires sont présents
+    if (!question || !options || !Array.isArray(options) || options.length < 2) {
+      return res.status(400).json({ error: "Une question doit avoir au moins 2 options valides." });
     }
 
+    // 🛑 Vérifier si une seule réponse est correcte
     const correctAnswers = options.filter(opt => opt.isCorrect === true);
     if (correctAnswers.length !== 1) {
       return res.status(400).json({ error: "Une question doit avoir UNE seule bonne réponse." });
     }
 
+    // ✅ Création de la nouvelle question
     const newQuestion = new Question({ question, options, category, difficulty });
     await newQuestion.save();
 
@@ -30,6 +33,7 @@ router.post("/create", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Erreur serveur lors de la création de la question." });
   }
 });
+
 
 /**
  * 📌 2️⃣ Récupérer 10 questions aléatoires selon la catégorie et la difficulté
