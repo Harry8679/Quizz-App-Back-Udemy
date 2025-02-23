@@ -72,12 +72,26 @@ router.get("/:category/:difficulty", async (req, res) => {
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    await Question.findByIdAndDelete(id);
+
+    // 🛑 Vérifier si l'ID fourni est valide
+    if (!id) {
+      return res.status(400).json({ error: "Veuillez fournir un ID valide." });
+    }
+
+    // 🔎 Rechercher la question
+    const deletedQuestion = await Question.findByIdAndDelete(id);
+
+    // 🛑 Si la question n'existe pas
+    if (!deletedQuestion) {
+      return res.status(404).json({ error: "Question non trouvée." });
+    }
+
     res.json({ message: "Question supprimée avec succès !" });
   } catch (err) {
     console.error("Erreur lors de la suppression de la question :", err);
     res.status(500).json({ error: "Erreur serveur lors de la suppression." });
   }
 });
+
 
 module.exports = router;
